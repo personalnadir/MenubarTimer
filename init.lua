@@ -1,23 +1,25 @@
---- === TimeBar ===
+--- === MenubarTimer ===
 ---
 --- A visual timer which is drawn over the MacOS menubar.
 --- The timer is controlled using URLs.
---- hammerspoon://timebar?minutes=2
---- TimeBar accepts second[s], minute[s] and hour[s] as parameters and can be
---- mixed such as hammerspoon://timebar?hour=1&minutes=2&seconds=30
---- TimeBar:start() must be called to start listening for URLs
---- TimeBar:stop() can be called to cease the listening
+--- hammerspoon://menubartimer?minutes=2
+--- MenubarTimer accepts second[s], minute[s] and hour[s] as parameters and can be
+--- mixed such as hammerspoon://menubartimer?hour=1&minutes=2&seconds=30
+--- MenubarTimer:start() must be called to start listening for URLs
+--- MenubarTimer:stop() can be called to cease the listening
+---
+--- Starting a new timer will safely override the previous timer
 
 function stopPreviousBar()
-  if timeBarRect then
-    timeBarRect:delete()
+  if menubarRect then
+    menubarRect:delete()
   end
-  if timeBarAnimate then
-    timeBarAnimate:stop()
+  if menubarAnimate then
+    menubarAnimate:stop()
   end
 end
 
-function timeBar(duration)
+function startMenubarTimer(duration)
   stopPreviousBar()
   local screen=hs.screen.mainScreen()
   local frame=screen:fullFrame()
@@ -26,14 +28,14 @@ function timeBar(duration)
   local rightCol={red=0.98,green=0.361,blue=0.49,alpha=0.5}
   local leftCol={red=0.416,green=0.51,blue=0.981,alpha=0.5}
 
-  timeBarRect=hs.drawing.rectangle(hs.geometry.rect(0,0,width,menuh))
-  timeBarRect:setFill(true)
-  timeBarRect:setBehaviorByLabels({hs.drawing.windowBehaviors.canJoinAllSpaces})
-  timeBarRect:show()
+  menubarRect=hs.drawing.rectangle(hs.geometry.rect(0,0,width,menuh))
+  menubarRect:setFill(true)
+  menubarRect:setBehaviorByLabels({hs.drawing.windowBehaviors.canJoinAllSpaces})
+  menubarRect:show()
 
   local function generateRectangle(endCol)
-    timeBarRect:setSize({w=width,h=menuh})
-    timeBarRect:setFillGradient(leftCol,endCol,0)
+    menubarRect:setSize({w=width,h=menuh})
+    menubarRect:setFillGradient(leftCol,endCol,0)
   end
   generateRectangle(rightCol)
 
@@ -50,18 +52,18 @@ function timeBar(duration)
 
   local step=duration/width
   local startNS=hs.timer.absoluteTime()
-  timeBarAnimate=hs.timer.doUntil(function() return width==0 end, function()
+  menubarAnimate=hs.timer.doUntil(function() return width==0 end, function()
     local curNS=hs.timer.absoluteTime()
     local ratio=1-(curNS-startNS)/(duration*1e9)
     width=math.max(0,frame.w*ratio)
     generateRectangle(interpolate(leftCol,rightCol,ratio))
   end,step)
 
-  timeBarAnimate:start()
+  menubarAnimate:start()
 end
 
 function startListening()
-  hs.urlevent.bind("timebar", function(_, params)
+  hs.urlevent.bind("menubartimer", function(_, params)
     local seconds=0
     local fieldsToSeconds={
       second=1,
@@ -77,20 +79,20 @@ function startListening()
       end
     end
     if seconds==0 then
-      hs.alert.show("timebar duration not specified")
+      hs.alert.show("menubartimer duration not specified")
     else
-      timeBar(seconds)
+      startMenubarTimer(seconds)
     end
   end)
 end
 
 function stopListening()
   stopPreviousBar()
-  hs.urlevent.bind("timebar", nil)
+  hs.urlevent.bind("menubartimer", nil)
 end
 
 return {
-  name='TimeBar',
+  name='MenubarTimer',
   version=1,
   author='Tom Piercy',
   licence='MIT',
