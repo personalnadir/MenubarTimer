@@ -1,0 +1,41 @@
+[
+  {
+    "Constant" : [
+
+    ],
+    "submodules" : [
+
+    ],
+    "Function" : [
+
+    ],
+    "Variable" : [
+
+    ],
+    "stripped_doc" : [
+
+    ],
+    "desc" : "A visual timer which is drawn over the MacOS menubar.",
+    "Deprecated" : [
+
+    ],
+    "type" : "Module",
+    "Constructor" : [
+
+    ],
+    "items" : [
+
+    ],
+    "Method" : [
+
+    ],
+    "doc" : "A visual timer which is drawn over the MacOS menubar.\nThe timer is controlled using URLs.\nhammerspoon:\/\/timebar?minutes=2\nTimeBar accepts second[s], minute[s] and hour[s] as parameters and can be\nmixed such as hammerspoon:\/\/timebar?hour=1&minutes=2&seconds=30\nTimeBar:start() must be called to start listening for URLs\nTimeBar:stop() can be called to cease the listening",
+    "Command" : [
+
+    ],
+    "Field" : [
+
+    ],
+    "name" : "TimeBar"
+  }
+]
